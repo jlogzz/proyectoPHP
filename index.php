@@ -13,22 +13,22 @@
 	
 	$response = array();
 	$response["status"] = false;
-	$response["error"] = "Bad request!";
+	$response["error"] = "Bad request!"; //si hay error en la peticion manda mensaje de error
 	
 	if($action == "put"){
 		$imagen = $_FILES["imagen"]["tmp_name"];
 	
-		$check = getimagesize($_FILES["imagen"]["tmp_name"]);
+		$check = getimagesize($_FILES["imagen"]["tmp_name"]); //calcula el tamano de la imagen a guardar en la base de datos
 		
 		 if($check !== false) {
-			 $imgData = base64_encode(file_get_contents($imagen));
+			 $imgData = base64_encode(file_get_contents($imagen)); //lo convierte a base64
 			 $src = 'data: '.$check["mime"].';base64,'.$imgData;
 			 
 			 $img = R::dispense('img');
 			 $img->data = $src;
 			 $img->name = $_REQUEST['name'];
 			 
-			 R::store($img);
+			 R::store($img); //guarda la imagen convertida
 			 
 			 $response["status"] = true;
 		 }else{
@@ -40,7 +40,7 @@
 		$type = $_REQUEST["type"];
 		
 		if($type == "tag"){
-			$img = R::load("img", $_REQUEST['id']);
+			$img = R::load("img", $_REQUEST['id']); //carga la imagen
 			
 			$response["status"] = true;
 			$response["data"] = '<img src="'.$img->data.'" width="500px" height="auto" />';
@@ -51,7 +51,7 @@
 			$response["data"] = $img->data;
 		}
 	}else if($action == "search"){
-		$imgs = R::find( 'img', ' name LIKE ? ', [ $_REQUEST['name'].'%' ] );
+		$imgs = R::find( 'img', ' name LIKE ? ', [ $_REQUEST['name'].'%' ] ); //busca por nombre o nombre similar
 		if(count($imgs) >0){
 			$images = array();
 			
@@ -68,6 +68,6 @@
 		}
 	}
 	
-	echo json_encode($response);
+	echo json_encode($response); //manda una respuesta Json
 		
 ?>
